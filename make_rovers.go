@@ -9,53 +9,34 @@ import (
 func make_rovers() {
 	var rover Rover
 	for i := 0; i < NUM_ROVERS; i++ {
-		rover.brain = make_brain()
+		rover.luts = make_luts()
 		rover.Fitness = 0
 		rover.Dead = false
-		//rover.Xpos = getRandomInt(20, arena.Width-20)
-		//rover.Ypos = getRandomInt(20, arena.Height-20)
 		rover.Xpos = arena.Width/2 + getRandomInt(-10,10)
 		rover.Ypos = arena.Height/2 + getRandomInt(-10,10)
 		rover.Vel_x   =  0
 		rover.Vel_y   =  0
-
-		//array or slice ?
-		//rovers = append(rovers, rover)
 		rovers[i] = rover
 	} //end of for loop on num_rovers
-	
-	//return rovers
-	/*for i:=0;i<NUM_ROVERS;i++ {
-		fmt.Println("I,X,Y,DX , DY:",i,rovers[i].Xpos,rovers[i].Ypos,rovers[i].Delta_x,rovers[i].Delta_y)
-		fmt.Println("NCONN1",rovers[i].brain.nconn[1])
-	}
-	*/
 } //end of make_rovers
 
-func make_brain() Brain {
-	var brain Brain
-	junk := 0
-	for i := 0; i < NUM_NEURONS; i++ {
-		junk =  getRandomInt(0, 2)
-		if junk == 0 {
-			brain.sign[i] = -1
-		} else {
-			brain.sign[i] = 1
-		}
-	}
-	var iconn [NUM_NEURONS]byte
-	//fully connected on inputs
-	for i := 0; i < NUM_NEURONS; i++ {
-		iconn[i] = byte(1)
-	}
-	brain.iconn = iconn
-	var nconn [NUM_NEURONS][NUM_NEURONS]byte
-	for ix := 0; ix < NUM_NEURONS; ix++ {
-		for iy := 0; iy < NUM_NEURONS; iy++ {
-			//junk = append(junk,byte(getRandomInt(0,2)))
-			nconn[ix][iy] = byte(getRandomInt(0, 2))
-		}
-	}
-	brain.nconn = nconn
-	return brain
+
+
+func make_luts() [NUM_NEURONS][8] int {
+	var luts [NUM_NEURONS][8]int
+
+	for ilut:=0;ilut<NUM_NEURONS;ilut++{
+
+    //inputs
+    luts[ilut][0] = getRandomInt(0,STATE_SIZE)
+    luts[ilut][1] = getRandomInt(0,STATE_SIZE)
+    //outputs
+    luts[ilut][2] = getRandomInt(0,STATE_SIZE)
+    luts[ilut][3] = getRandomInt(0,STATE_SIZE)
+    //truth table
+    for tt:=4;tt<8;tt++ {
+            luts[ilut][tt] = getRandomInt(0,2)
+    }
+    } //end of loop on ilut
+return luts
 }

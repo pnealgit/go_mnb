@@ -12,45 +12,6 @@ import (
 //	"time"
 )
 
-//remember kids, Marshal only converts members of a struct if
-//the name is Capitalized.... 55 minutes on that problem...
-type Mess struct {
-	Msg_type  string
-	Positions [NUM_ROVERS][2]int
-	//Position [8]int
-}
-
-type Wall struct {
-	xy [2]int
-}
-
-type Arena struct {
-	Width  int
-	Height int
-	Food   [][2]int
-	Epochs int
-}
-
-type Brain struct {
-	seed  int64
-	sign  [NUM_NEURONS]int
-	iconn [NUM_NEURONS]byte
-	nconn [NUM_NEURONS][NUM_NEURONS]byte
-}
-
-//as of Dec 19, the only sensor data I have
-//to hang on to are the end positions of each sensor
-//and that is only for drawing purposes
-type Rover struct {
-	brain       Brain
-	Xpos        int
-	Ypos        int
-	Fitness     int
-	Vel_x		int
-	Vel_y		int
-	Sensor_data [NUM_SENSORS][4]int
-	Dead        bool
-}
 
 var rovers [NUM_ROVERS]Rover
 var arena Arena
