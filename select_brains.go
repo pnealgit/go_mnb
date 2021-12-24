@@ -32,10 +32,10 @@ func select_brains() {
 		rovers[ir].Dead = false
 		//rovers[ir].Xpos = getRandomInt(20, arena.Width-20)
 		//rovers[ir].Ypos = getRandomInt(20, arena.Height-20)
-		rovers[ir].Xpos = arena.Width/2
-		rovers[ir].Ypos = arena.Height/2
-		rovers[ir].Vel_x = getRandomInt(-1,2)
-		rovers[ir].Vel_y = getRandomInt(-1,2)
+		rovers[ir].Xpos = arena.Width / 2
+		rovers[ir].Ypos = arena.Height / 2
+		rovers[ir].Vel_x = getRandomInt(-1, 2)
+		rovers[ir].Vel_y = getRandomInt(-1, 2)
 
 	}
 
@@ -52,19 +52,11 @@ func select_brains() {
 	for ib := elite_cut; ib < NUM_ROVERS; ib++ {
 		//old_idx := getRandomInt(0,elite_cut)
 		//rovers[ib].brain = rovers[old_idx].brain
-		bam := getRandomInt(0,elite_cut)
-		c := [NUM_NEURONS][NUM_NEURONS]byte{}
-		c = rovers[bam].brain.nconn
-		rovers[ib].brain.nconn = c
+		bam := getRandomInt(0, elite_cut)
+		c := [NUM_NEURONS][8]int{}
+		c = rovers[bam].Luts
+		rovers[ib].Luts = c
 
-		sig := [NUM_NEURONS]int{}
-		sig = rovers[bam].brain.sign
-		rovers[ib].brain.sign = sig
-
-		d := [NUM_NEURONS]byte{}
-		d = rovers[bam].brain.iconn
-		rovers[ib].brain.iconn = d
-		
 	}
 
 	mutate_brains(elite_cut)
@@ -93,12 +85,18 @@ func mutate_brains(elite_cut int) {
 	for im := elite_cut; im < NUM_ROVERS; im++ {
 		for k := 0; k < num_mutations; k++ {
 			ix := getRandomInt(0, NUM_NEURONS)
-			iy := getRandomInt(0, NUM_NEURONS)
-			if rovers[im].brain.nconn[ix][iy] == 1 {
-				rovers[im].brain.nconn[ix][iy] = 0
-			} else {
-				rovers[im].brain.nconn[ix][iy] = 1
+			iy := getRandomInt(0, 8)
+			if iy > 3 { //truth table 1/0
+				if rovers[im].Luts[ix][iy] == 1 {
+					rovers[im].Luts[ix][iy] = 0
+				} else {
+					rovers[im].Luts[ix][iy] = 1
+				}
 			}
+			if iy <= 3 {
+				rovers[im].Luts[ix][iy] = getRandomInt(0, STATE_SIZE)
+			}
+
 		}
 	} //end of loop on num_rovers
 } //end of mutate func

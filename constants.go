@@ -27,7 +27,7 @@ type Brain struct {
 //to hang on to are the end positions of each sensor
 //and that is only for drawing purposes
 type Rover struct {
-        luts       [NUM_NEURONS][8]int
+        Luts       [NUM_NEURONS][8]int
         Xpos        int
         Ypos        int
         Fitness     int
@@ -52,7 +52,7 @@ var SENSOR_LENGTH = 160
 //NUM_SENSORS * 4 * 4
 const NUM_NEURONS = 64
 const NUM_ROVERS = 20
-var STATE_SIZE = 64
+const STATE_SIZE = 64
 var INPS_SIZE = 3
 var THRES = 32 
 var LEAKING_CONSTANT = 1

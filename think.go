@@ -4,101 +4,110 @@ import (
 	"fmt"
 )
 
-func think(ir int, sensor_data_string string) {
-	//fmt.Println("\nIR,DATA IN: ", ir, sensor_data_string)
+//essentially sweep might be a kind of finite state machine (fsm)
 
-	var brain Brain
-	brain = rovers[ir].brain
-	var sensor_data [NUM_NEURONS]byte
+var IN_STATE [STATE_SIZE]int
+var OUT_STATE [STATE_SIZE]int
+
+func think(ir int, sensor_data_string string) int {
+
+	var ACCUMULATORS [3]int
+	var sensor_data []int
 
 	sensor_data = convert_sensor_data(sensor_data_string)
 
-	var temp_outps [NUM_NEURONS]byte
-	var memb [NUM_NEURONS]int //because memb can go negative
-	var outps [NUM_NEURONS]byte
-	var fire_knt [NUM_NEURONS]int
-	var inps [NUM_NEURONS]byte
+	//var data_in = [0,0,0];
+	//data_in = payload;
 
+	var ix int
+	var max_index int
+	var max_value int
 
-	inps = sensor_data
-	//fmt.Println("INPS: ", inps)
+	for i := 0; i < len(ACCUMULATORS); i++ {
+		ACCUMULATORS[i] = 0
+	}
 
-	sign := brain.sign
+	sweep(ir, sensor_data)
+	possibles := (STATE_SIZE - INPS_SIZE)
+	modo := possibles / INPS_SIZE
 
-	for epoch := 0; epoch < SETTLING_TIME; epoch++ {
-		for k := 0; k < NUM_NEURONS; k++ {
-			outps[k] = temp_outps[k]
-			temp_outps[k] = 0
+	for ak := 0; ak < possibles; ak++ {
+		ix = ak % modo
+		ACCUMULATORS[ix] = ACCUMULATORS[ix] + OUT_STATE[INPS_SIZE+ak]
+	}
+
+	fmt.Println("ACC: ", ACCUMULATORS)
+
+	for jj := 0; jj < len(ACCUMULATORS); jj++ {
+		if ACCUMULATORS[jj] > max_value {
+			max_value = ACCUMULATORS[jj]
+			max_index = jj
 		}
-		//fmt.Println("AT TOP OUTPS: ", outps)
+	}
+	//if you don't know what you are doing, go straight
+	if ACCUMULATORS[0] == ACCUMULATORS[1] && ACCUMULATORS[1] == ACCUMULATORS[2] {
+		max_index = 1
+	}
 
-		for nindex := 0; nindex < NUM_NEURONS; nindex++ {
-			if outps[nindex] == 0 {
-				memb[nindex] = 0
-				//not in refactory state
-				//do input to membrane
-			for ilink:=0;ilink<NUM_NEURONS;ilink++ {
-				//iconn would have had a nindex if iconn
-				//changed from neuron to neuron
-			memb[nindex] += int(inps[ilink] * brain.iconn[ilink])
+	return max_index
+}
+
+func sweep(ir int, data_in []int) {
+	//gate_type := 0
+	input1 := 0
+	input2 := 0
+	out := 0
+
+	//might have to deep copy this
+	for j := 0; j < STATE_SIZE; j++ {
+		IN_STATE[j] = OUT_STATE[j]
+	}
+
+	//write over input section
+	for j := 0; j < len(data_in); j++ {
+		IN_STATE[j] = data_in[j]
+	}
+	for j := 0; j < STATE_SIZE; j++ {
+		OUT_STATE[j] = 0
+	}
+
+	var LUTS [STATE_SIZE][8]int
+	//I think this is just a copy...maybe..
+	LUTS = rovers[ir].Luts
+	var tt [2][2]int
+	//big loop
+	for ni := 0; ni < len(LUTS); ni++ {
+		input1 = IN_STATE[LUTS[ni][0]]
+		input2 = IN_STATE[LUTS[ni][1]]
+		out = -9
+		//ok here's where the metal hits the road
+		//make a tt or figure out indexing ?
+		//fine.. do the loop for now.
+		//Put the tt in the struct ?
+		knt := 4
+		for i := 0; i < 2; i++ {
+			for j := 0; j < 2; j++ {
+				tt[i][j] = LUTS[ni][knt]
+				knt++
 			}
 		}
-		} //end of loop on nindex for inputs
-		fmt.Println("\nENDOF NINDEX INPUTS")
-		fmt.Println("MEMB  : ",memb)
+		out = tt[input1][input2]
 
-		for nindex := 0; nindex < NUM_NEURONS; nindex++ {
-			if outps[nindex] == 0 {
-			stuff := 0
-			for il := 0; il < NUM_NEURONS; il++ {
-			stuff +=  int(outps[il] * brain.nconn[nindex][il]) *sign[il]
-			}
-			memb[nindex] += stuff
-        		}
-		} //end of nindex just save membrane and compute firings after
-
-		fmt.Println("\n END OF EPOCH",epoch)
-		fmt.Println("MEMB       : ", memb)
-		temp_outps = get_output_state(memb)
-
-		//fire_knt is used to choose what sensor to go with
-		for k := 0; k < NUM_NEURONS; k++ {
-			fire_knt[k] += int(temp_outps[k])
+		//only update outstate if out is 1
+		//Only overwrite 0
+		if out == 1 {
+			OUT_STATE[LUTS[ni][2]] = out
+			OUT_STATE[LUTS[ni][3]] = out
 		}
-	} //end of settling_time loop (epochs)
+	} //end of loop on NEURONS
+	//end of sweep
+}
 
-
-	dx := temp_outps[0] + temp_outps[NUM_NEURONS-1]
-	dy := temp_outps[1] + temp_outps[NUM_NEURONS-2]
-	if dx == 0 {
-		rovers[ir].Vel_x = 0
-	}
-	if dx == 1 {
-		rovers[ir].Vel_x = 1
-	}
-	if dx == 2 {
-		rovers[ir].Vel_x = -1
-	}
-	if dy == 0 {
-		rovers[ir].Vel_y = 0
-	}
-	if dy == 1 {
-		rovers[ir].Vel_y = 1
-	}
-	if dy == 2 {
-		rovers[ir].Vel_y = -1
-	}
-
-} //end of think
-
-
-
-
-func convert_sensor_data(sensor_data_string string) [NUM_NEURONS]byte {
+func convert_sensor_data(sensor_data_string string) []int {
 	//could have called Atoi on this, but meh
-	var sig byte
+	var sig int
 	sig = 0
-	var sensor_data [NUM_NEURONS]byte
+	var sensor_data []int
 
 	for i := 0; i < len(sensor_data_string); i++ {
 		if sensor_data_string[i] == '0' {
@@ -121,38 +130,4 @@ func convert_sensor_data(sensor_data_string string) [NUM_NEURONS]byte {
 	}
 
 	return sensor_data
-}
-
-func n_n_membrane(nconn [NUM_NEURONS]byte, sign [NUM_NEURONS]byte, outps [NUM_NEURONS]byte) int {
-
-	junk := 0
-	for il := 0; il < NUM_NEURONS; il++ {
-		if sign[il] == 1 {
-			junk += int(outps[il] * nconn[il])
-		} else {
-			junk -= int(outps[il] * nconn[il])
-		}
-
-	}
-	return junk
-}
-
-func get_output_state(membrane [NUM_NEURONS]int) [NUM_NEURONS]byte {
-	var junk [NUM_NEURONS]byte
-
-	for nindex := 0; nindex < NUM_NEURONS; nindex++ {
-		junk[nindex] = 0
-		if membrane[nindex] < 0 {
-			membrane[nindex] = 0
-		}
-		if membrane[nindex] >= LEAKING_CONSTANT {
-			membrane[nindex] -= LEAKING_CONSTANT
-		}
-
-		r := getRandomInt(-2, 3)
-		if membrane[nindex] >= (THRES + r) {
-			junk[nindex] = 1
-		}
-	}
-	return junk
 }

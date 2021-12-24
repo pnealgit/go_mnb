@@ -9,9 +9,8 @@ import (
 	"net/http"
 	"os"
 	"strings"
-//	"time"
+	//	"time"
 )
-
 
 var rovers [NUM_ROVERS]Rover
 var arena Arena
@@ -68,32 +67,32 @@ func talk(w http.ResponseWriter, r *http.Request) {
 	for try := 0; try < 100; try++ {
 		fmt.Println("TRY: ", try)
 		for num_steps := 0; num_steps < NUM_MAX_STEPS; num_steps++ {
-				draw_positions = do_update()
-				dead_knt := 0
-        			for ix:= 0;ix<NUM_ROVERS;ix++ {
-                			if rovers[ix].Dead {
-                        			dead_knt += 1
-                			}
+			draw_positions = do_update()
+			dead_knt := 0
+			for ix := 0; ix < NUM_ROVERS; ix++ {
+				if rovers[ix].Dead {
+					dead_knt += 1
 				}
-				if dead_knt >= NUM_ROVERS {
-					dead_knt = 0
-					//fmt.Println("DEAD KNT >= NUM_ROVERS")
-					break
-				}
+			}
+			if dead_knt >= NUM_ROVERS {
+				dead_knt = 0
+				//fmt.Println("DEAD KNT >= NUM_ROVERS")
+				break
+			}
 
-				mmm.Msg_type = "positions"
-				mmm.Positions = draw_positions
-				draw_message, err = json.Marshal(mmm)
-				if err != nil {
-					fmt.Println("bad angles Marshal")
-					os.Exit(7)
-				}
+			mmm.Msg_type = "positions"
+			mmm.Positions = draw_positions
+			draw_message, err = json.Marshal(mmm)
+			if err != nil {
+				fmt.Println("bad angles Marshal")
+				os.Exit(7)
+			}
 
-				err = c.WriteMessage(fixed_mt, draw_message)
-				if err != nil {
-					log.Println("BAD DRAW MESSAGE:", err)
-					os.Exit(4)
-				} //end of if on write err
+			err = c.WriteMessage(fixed_mt, draw_message)
+			if err != nil {
+				log.Println("BAD DRAW MESSAGE:", err)
+				os.Exit(4)
+			} //end of if on write err
 			//time.Sleep(5 * time.Millisecond)
 		} //loop on num_steps
 		select_brains()

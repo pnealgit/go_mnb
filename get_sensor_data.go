@@ -1,7 +1,7 @@
 package main
 
 import (
-//	"fmt"
+	//	"fmt"
 	"math"
 )
 
@@ -9,22 +9,22 @@ func get_sensor_data(ir int) {
 	//the return is a vector of 1s and 0s
 
 	//gotta do it this way to avoid jumping over obstacles
-		wall := 0
-		var Xpos int
-		var Ypos int
-		var sensor_angle_index int
-		var dist int
-		Xpos = rovers[ir].Xpos
-		Ypos = rovers[ir].Ypos
-		var zorro int
-		zorro = check_food_position(Xpos, Ypos)
-		if zorro == 7 {
-			rovers[ir].Fitness += 5
-		}
+	wall := 0
+	var Xpos int
+	var Ypos int
+	var sensor_angle_index int
+	var dist int
+	Xpos = rovers[ir].Xpos
+	Ypos = rovers[ir].Ypos
+	var zorro int
+	zorro = check_food_position(Xpos, Ypos)
+	if zorro == 7 {
+		rovers[ir].Fitness += 5
+	}
 	for isensor := 0; isensor < NUM_SENSORS; isensor++ {
 
 		//sensor_angle_index = get_sensor_angle_index(isensor, rovers[ir].Angle_index)
-		sensor_angle_index = isensor;
+		sensor_angle_index = isensor
 		deltax := ANGLES_DX[sensor_angle_index]
 		deltay := ANGLES_DY[sensor_angle_index]
 		Xpos = rovers[ir].Xpos
@@ -54,15 +54,15 @@ func get_sensor_data(ir int) {
 
 			wall = check_food_position(Xpos, Ypos)
 			if wall > 0 {
-				rovers[ir].Fitness +=1; //get some for food
+				rovers[ir].Fitness += 1 //get some for food
 
 				break
 			}
 		} //end of step loop
-			rovers[ir].Sensor_data[isensor][0] = Xpos
-			rovers[ir].Sensor_data[isensor][1] = Ypos
-			rovers[ir].Sensor_data[isensor][2] = wall
-			rovers[ir].Sensor_data[isensor][3] = dist
+		rovers[ir].Sensor_data[isensor][0] = Xpos
+		rovers[ir].Sensor_data[isensor][1] = Ypos
+		rovers[ir].Sensor_data[isensor][2] = wall
+		rovers[ir].Sensor_data[isensor][3] = dist
 	} //end of isensor loop
 
 	rovers[ir] = rovers[ir]
@@ -70,7 +70,7 @@ func get_sensor_data(ir int) {
 
 func make_binary_sensor_data(ir int) string {
 	//fmt.Println("in make binary : ",rovers[ir].Sensor_data)
-	
+
 	//knt := 0
 	//obstacles
 	//hmmm lets just do good/bad on wall/food
@@ -78,7 +78,7 @@ func make_binary_sensor_data(ir int) string {
 	//good := "11"
 	//bad  := "00"
 	//zip  := "01"
-	
+
 	nothing := "0001"
 	no_go := "0011"
 	eats := "1111"
@@ -88,7 +88,7 @@ func make_binary_sensor_data(ir int) string {
 	soso := "1001"
 	clos := "1011" //close is a reserved word
 	alert := "1011"
-	
+
 	var bsd string
 	bsd = ""
 
@@ -97,9 +97,9 @@ func make_binary_sensor_data(ir int) string {
 		otype := rovers[ir].Sensor_data[i][2]
 		if otype == 0 {
 			bsd = bsd + nothing
-		//	bsd = bsd + zip
+			//	bsd = bsd + zip
 		}
-	
+
 		if otype > 0 && otype < 7 {
 			//bsd = bsd + bad
 			bsd = bsd + no_go
@@ -113,7 +113,7 @@ func make_binary_sensor_data(ir int) string {
 		junkf := float64(dist)
 		slf := float64(SENSOR_LENGTH)
 		if junkf > .8*slf {
-			if otype > 0{
+			if otype > 0 {
 				bsd = bsd + far
 			} else {
 				bsd = bsd + nothing
@@ -126,12 +126,12 @@ func make_binary_sensor_data(ir int) string {
 			continue
 		}
 		//if junkf > .15*slf && junkf <= .5 {
-		if junkf > .15*slf  {
+		if junkf > .15*slf {
 			bsd = bsd + clos
 			continue
 		}
 		//if junkf <= .15*slf {
-			bsd = bsd + alert
+		bsd = bsd + alert
 		//}
 	}
 
@@ -176,7 +176,7 @@ func check_food_position(xp int, yp int) int {
 	return status
 }
 
-func get_sensor_angle_index(isensor int,rover_angle_index int) int {
+func get_sensor_angle_index(isensor int, rover_angle_index int) int {
 	ai := 99
 	//first sensor
 	if isensor == 0 {
