@@ -23,8 +23,8 @@ func get_sensor_data(ir int) {
 	}
 	for isensor := 0; isensor < NUM_SENSORS; isensor++ {
 
-		//sensor_angle_index = get_sensor_angle_index(isensor, rovers[ir].Angle_index)
-		sensor_angle_index = isensor
+		sensor_angle_index = get_sensor_angle_index(isensor, rovers[ir].Angle_index)
+		//sensor_angle_index = isensor
 		deltax := ANGLES_DX[sensor_angle_index]
 		deltay := ANGLES_DY[sensor_angle_index]
 		Xpos = rovers[ir].Xpos
@@ -141,18 +141,18 @@ func make_binary_sensor_data(ir int) string {
 
 func check_wall_position(xp int, yp int) int {
 
-	if yp <= 1 {
+	if yp <= 2 {
 		return 1
 	}
 
-	if yp >= arena.Height-1 {
+	if yp >= arena.Height-2 {
 		return 2
 	}
 
-	if xp <= 1 {
+	if xp <= 2 {
 		return 3
 	}
-	if xp >= arena.Width-1 {
+	if xp >= arena.Width-2 {
 		return 4
 	}
 	return 0

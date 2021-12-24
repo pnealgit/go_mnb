@@ -4,7 +4,7 @@ package main
 //the name is Capitalized.... 55 minutes on that problem...
 type Mess struct {
         Msg_type  string
-        Positions [NUM_ROVERS][2]int
+        Positions [NUM_ROVERS][8]int
         //Position [8]int
 }
 
@@ -35,6 +35,7 @@ type Rover struct {
         Vel_y           int
         Sensor_data [NUM_SENSORS][4]int
         Dead        bool
+	Angle_index int
 }
 
 
@@ -51,11 +52,9 @@ var SENSOR_LENGTH = 160
 
 //NUM_SENSORS * 4 * 4
 const NUM_NEURONS = 64
-const NUM_ROVERS = 20
+const NUM_ROVERS = 30
 const STATE_SIZE = 64
 var INPS_SIZE = 3
-var THRES = 32 
-var LEAKING_CONSTANT = 1
 var SETTLING_TIME = 10
 var MUTATION_RATE = .2    //"Use the fucking float, Luke"
 
@@ -64,4 +63,5 @@ var ANGLES_DX = [8]int{1, 1,  0, -1, -1, -1, 0, 1}
 var ANGLES_DY = [8]int{0,-1, -1, -1,  0,  1, 1, 1}
 var NUM_ANGLES = 8
 var FOOD_RADIUS = 15
-var NUM_MAX_STEPS = 1200
+var NUM_MAX_STEPS = 2200
+var NUM_TRIES = 500

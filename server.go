@@ -62,9 +62,9 @@ func talk(w http.ResponseWriter, r *http.Request) {
 
 	//ok now we just spew data to web
 	var draw_message []byte
-	var draw_positions [NUM_ROVERS][2]int
+	var draw_positions [NUM_ROVERS][8]int
 	var mmm Mess
-	for try := 0; try < 100; try++ {
+	for try := 0; try < NUM_TRIES; try++ {
 		fmt.Println("TRY: ", try)
 		for num_steps := 0; num_steps < NUM_MAX_STEPS; num_steps++ {
 			draw_positions = do_update()

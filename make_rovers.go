@@ -14,6 +14,7 @@ func make_rovers() {
 		rover.Dead = false
 		rover.Xpos = arena.Width/2 + getRandomInt(-10, 10)
 		rover.Ypos = arena.Height/2 + getRandomInt(-10, 10)
+		rover.Angle_index = getRandomInt(0,8)
 		rover.Vel_x = 0
 		rover.Vel_y = 0
 		rovers[i] = rover

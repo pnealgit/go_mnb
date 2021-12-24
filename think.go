@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	//"fmt"
 )
 
 //essentially sweep might be a kind of finite state machine (fsm)
@@ -10,7 +10,7 @@ var IN_STATE [STATE_SIZE]int
 var OUT_STATE [STATE_SIZE]int
 
 func think(ir int, sensor_data_string string) int {
-
+//	fmt.Println("DATA IN: ",sensor_data_string)
 	var ACCUMULATORS [3]int
 	var sensor_data []int
 
@@ -41,12 +41,13 @@ func think(ir int, sensor_data_string string) int {
 		ACCUMULATORS[ix] = ACCUMULATORS[ix] + OUT_STATE[iak]
 	}
 	*/
-	step := len(ACCUMULATORS)
+	//fmt.Println("OUTSTATE: ",OUT_STATE)
+	step := len(ACCUMULATORS) //3
 	for j:=0;j<STATE_SIZE;j++ {
 		ix = j % step
 		ACCUMULATORS[ix] += OUT_STATE[j]
 	}
-	fmt.Println("ACC: ", ACCUMULATORS)
+	//fmt.Println("ACC: ", ACCUMULATORS)
 
 	for jj := 0; jj < len(ACCUMULATORS); jj++ {
 		if ACCUMULATORS[jj] > max_value {

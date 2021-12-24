@@ -7,14 +7,14 @@ function Rover(xy) {
 
     this.draw = function() {
 	    //console.log("DRAW SENSOR DATA XY: ",this.sensor_data)
-	    //console.log("NUM SENSOrS: ",NUM_SENSORS)
 	x = this.sensor_data.shift()
 	y = this.sensor_data.shift()
 	//console.log("center x,y:",x,y);
         ctx = myGameArea.context;
         ctx.beginPath();
         ctx.arc(x,y, this.r, 0, 2 * Math.PI);
-        ctx.fillStyle = "red";
+        //ctx.fillStyle = "red";
+        ctx.fillStyle = '#'+(0x1000000+(Math.random())*0xffffff).toString(16).substr(1,6);
         ctx.fill();
         ctx.beginPath();
         ctx.strokeStyle = '#000000';
