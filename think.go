@@ -23,19 +23,29 @@ func think(ir int, sensor_data_string string) int {
 	var max_index int
 	var max_value int
 
-	for i := 0; i < len(ACCUMULATORS); i++ {
-		ACCUMULATORS[i] = 0
-	}
+//	for i := 0; i < len(ACCUMULATORS); i++ {
+//		ACCUMULATORS[i] = 0
+//	}
 
 	sweep(ir, sensor_data)
-	possibles := (STATE_SIZE - INPS_SIZE)
+
+	/*possibles := (STATE_SIZE - INPS_SIZE)
 	modo := possibles / INPS_SIZE
+	fmt.Println("POSSIBLES,MODO: ",possibles,modo)
 
 	for ak := 0; ak < possibles; ak++ {
 		ix = ak % modo
-		ACCUMULATORS[ix] = ACCUMULATORS[ix] + OUT_STATE[INPS_SIZE+ak]
+		iak := 0
+		iak = INPS_SIZE + ak
+		fmt.Println("IX: ",ix," IAK: ",iak)
+		ACCUMULATORS[ix] = ACCUMULATORS[ix] + OUT_STATE[iak]
 	}
-
+	*/
+	step := len(ACCUMULATORS)
+	for j:=0;j<STATE_SIZE;j++ {
+		ix = j % step
+		ACCUMULATORS[ix] += OUT_STATE[j]
+	}
 	fmt.Println("ACC: ", ACCUMULATORS)
 
 	for jj := 0; jj < len(ACCUMULATORS); jj++ {
@@ -115,7 +125,7 @@ func convert_sensor_data(sensor_data_string string) []int {
 		} else {
 			sig = 1
 		}
-		sensor_data[i] = sig
+		sensor_data = append(sensor_data,sig)
 	}
 
 	//throw in some noise if the sensors sense nothing...Just vast
