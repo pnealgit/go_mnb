@@ -18,6 +18,7 @@ func get_sensor_data(ir int) {
 	Ypos = rovers[ir].Ypos
 	var zorro int
 	//food is prey
+	//third arg  is whether it is a rover or rover sensor
 	zorro = check_food_position(Xpos, Ypos,true)
 	if zorro == 7 {
 		rovers[ir].Fitness += 5
@@ -168,7 +169,7 @@ func check_food_position(xp int, yp int,isRover bool) int {
 		dx := float64(f.Xpos - xp)
 		dy := float64(f.Ypos - yp)
 		dist := int(math.Hypot((dx), (dy)))
-		if dist <= FOOD_RADIUS {
+		if dist <= BOX_HALF {
 			if isRover {
 				prey[i].Dead = true
 			}
