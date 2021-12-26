@@ -3,7 +3,7 @@ import (
 //	"fmt"
 )
 
-func do_update() [NUM_ROVERS][8]int {
+func do_rover_updates() [NUM_ROVERS][8]int {
 
 	//var err error
 	var binary_sensor_data string

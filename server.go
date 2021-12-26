@@ -13,6 +13,8 @@ import (
 )
 
 var rovers [NUM_ROVERS]Rover
+var prey [NUM_PREY]Prey
+
 var arena Arena
 var num_steps int
 var addr = flag.String("addr", "localhost:8081", "http service address")
@@ -54,20 +56,24 @@ func talk(w http.ResponseWriter, r *http.Request) {
 			} //end of if on jerr
 			fmt.Println("ARENA WIDTH: ", arena.Width)
 			fmt.Println("ARENA HEIGHT: ", arena.Height)
-			fmt.Println("ARENA FOOD: ", arena.Food)
+			//fmt.Println("ARENA FOOD: ", arena.Food)
 			make_rovers()
+			make_prey()
 			break
 		} //end of if on arena
 	} //end of infinite loop waiting for message
 
 	//ok now we just spew data to web
 	var draw_message []byte
-	var draw_positions [NUM_ROVERS][8]int
+	var rover_positions [NUM_ROVERS][8]int
+	var prey_positions [NUM_PREY][2]int
 	var mmm Mess
 	for try := 0; try < NUM_TRIES; try++ {
 		fmt.Println("TRY: ", try)
 		for num_steps := 0; num_steps < NUM_MAX_STEPS; num_steps++ {
-			draw_positions = do_update()
+			rover_positions = do_rover_updates()
+			prey_positions = do_prey_updates()
+			//fmt.Println("PREY POSITIONS: ",prey_positions)
 			dead_knt := 0
 			for ix := 0; ix < NUM_ROVERS; ix++ {
 				if rovers[ix].Dead {
@@ -81,7 +87,8 @@ func talk(w http.ResponseWriter, r *http.Request) {
 			}
 
 			mmm.Msg_type = "positions"
-			mmm.Positions = draw_positions
+			mmm.Predator_positions = rover_positions
+			mmm.Prey_positions = prey_positions
 			draw_message, err = json.Marshal(mmm)
 			if err != nil {
 				fmt.Println("bad angles Marshal")

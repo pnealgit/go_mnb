@@ -4,15 +4,25 @@ package main
 //the name is Capitalized.... 55 minutes on that problem...
 type Mess struct {
         Msg_type  string
-        Positions [NUM_ROVERS][8]int
+        Predator_positions [NUM_ROVERS][8]int
+        Prey_positions [NUM_PREY][2]int
         //Position [8]int
 }
 
 type Arena struct {
         Width  int
         Height int
-        Food   [][2]int
+//        Food   [][2]int
         Epochs int
+}
+
+type Prey struct {
+	Xpos	int
+	Ypos	int
+	Ulx	int
+	Uly	int
+	Type	int
+	Dead	bool
 }
 
 type Brain struct {
@@ -53,6 +63,7 @@ var SENSOR_LENGTH = 160
 //NUM_SENSORS * 4 * 4
 const NUM_NEURONS = 64
 const NUM_ROVERS = 30
+const NUM_PREY = 20
 const STATE_SIZE = 64
 var INPS_SIZE = 3
 var SETTLING_TIME = 10
@@ -66,3 +77,6 @@ var FOOD_RADIUS = 15
 var NUM_MAX_STEPS = 2200
 var NUM_TRIES = 500
 var GLOBAL_FITNESS = 0
+var BOX_WIDTH = 21
+var BOX_HEIGHT = 21
+var BOX_HALF   = 10

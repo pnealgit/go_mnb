@@ -1,5 +1,17 @@
+function make_new_rovers(positions) {
+     for (var pos=0;pos < positions.length;pos++) {
+           ROVERS[pos] = new Rover(positions[pos]);
+     }
+}
+function update_rovers(positions) {
+    for (var pos=0;pos < positions.length;pos++) {
+        ROVERS[pos].sensor_data = positions[pos];
+    }
+} //end of function
+
+
 function Rover(xy) {
-	console.log("XY IN ROVER: ",xy)
+	//console.log("XY IN ROVER: ",xy)
 	//start in the middle
     this.r = 10;
     this.sensor_data = xy;
@@ -37,7 +49,6 @@ function Rover(xy) {
 //end of Rover function
 
 function draw_rovers() {
-	//console.log("IN DrAW roVerS")
     for (var i = 0; i < ROVERS.length; i++) {
         ROVERS[i].draw();
     } //end of loop on rovers

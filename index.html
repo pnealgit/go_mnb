@@ -19,21 +19,17 @@ table, th, td {
 </style>
 
 <script src='./public/game.js'></script>
-<script src='./public/food.js'></script>
-<script src='./public/gostuff.js'></script>
+<script src='./public/prey.js'></script>
+<script src='./public/rovers.js'></script>
 
 <script>  
 
-NUM_ROVERS = 10;
-console.log("num_roverss",NUM_ROVERS)
 var pause = false;
 ROVERS = [];
-FOODS = [];
-NUM_FOODS = 8;
+PREY = [];
 width = 480
 height = 300
-NUM_SENSORS = 3;
-
+NUM_SENSORS = 3
 function getRandomInt(min,max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }

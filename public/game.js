@@ -1,17 +1,15 @@
 var ws
 var pause = false
-FOODXY = [] 
 
 function WebsocketStart() {
 	console.log("WEBSOCKET START")
-      	setup();
+      	//setup();
     ws = new WebSocket("ws://localhost:8081/talk")
     ws.onopen = function(evt) {
 	junk = {}
 	junk['Width'] = width;
 	junk['Height'] = height;
 	junk['Epochs'] = 100;
-	junk['Food'] = FOODXY;
 	junk['msg_type'] = "make_arena";	
         senddata(junk);
       	myGameArea.start(); 
@@ -26,12 +24,22 @@ function WebsocketStart() {
       	n = e.data.indexOf("position");
       	if (n != -1 ) {
 	 	var response = JSON.parse(e.data)
-         	positions = response.Positions
+		//console.log("RESPONSE: ",response)
 	      	if (ROVERS.length <= 0) {
-			make_new_rovers(response.Positions);
+			make_new_rovers(response.Predator_positions);
 	      	} else {
-			update_rovers(response.Positions)
+			update_rovers(response.Predator_positions)
 		}
+
+	      	if (PREY.length <= 0) {
+			make_new_prey(response.Prey_positions);
+	      	} else {
+			update_prey(response.Prey_positions)
+		}
+
+		//console.log("PREY AFTER LOAD: ",PREY)
+
+		
       } //end of if found 'positions'
     } //endo of onmessage
 
@@ -54,25 +62,18 @@ senddata = function(data) {
     ws.send(stuff);
 } //end of function senddata
 
-function setup() {
-    make_foods();
-    reset_food_positions();
-
-} //end of setup
     
 function updateGameArea() {
     if (pause) {
        return
     }
        var mydata = {};
-       //reset_rover_positions();
        //mydata['num_episodes'] =  num_episodes;
        //senddata(mydata);
-       reset_food_positions();
 
     myGameArea.clear();
     draw_rovers();
-    update_foods();
+    draw_prey();
 } //end of updateGameArea
 
 myGameArea = {
@@ -98,16 +99,4 @@ myGameArea = {
         this.context.fillRect(0,0,this.canvas.width,this.canvas.height);
     } 
 }    //end of gamearea
-
-function make_new_rovers(positions) {
-	
-     for (var pos=0;pos < positions.length;pos++) {
-           ROVERS[pos] = new Rover(positions[pos]);
-     }
-}
-function update_rovers(positions) {
-    for (var pos=0;pos < positions.length;pos++) {
-    	ROVERS[pos].sensor_data = positions[pos];
-    }
-} //end of function
 

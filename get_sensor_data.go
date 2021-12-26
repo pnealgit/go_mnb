@@ -1,7 +1,7 @@
 package main
 
 import (
-	//	"fmt"
+//	"fmt"
 	"math"
 )
 
@@ -17,7 +17,8 @@ func get_sensor_data(ir int) {
 	Xpos = rovers[ir].Xpos
 	Ypos = rovers[ir].Ypos
 	var zorro int
-	zorro = check_food_position(Xpos, Ypos)
+	//food is prey
+	zorro = check_food_position(Xpos, Ypos,true)
 	if zorro == 7 {
 		rovers[ir].Fitness += 5
 	}
@@ -52,7 +53,7 @@ func get_sensor_data(ir int) {
 				break
 			}
 
-			wall = check_food_position(Xpos, Ypos)
+			wall = check_food_position(Xpos, Ypos,false)
 			if wall > 0 {
 				rovers[ir].Fitness += 1 //get some for food
 
@@ -159,16 +160,18 @@ func check_wall_position(xp int, yp int) int {
 
 }
 
-func check_food_position(xp int, yp int) int {
+func check_food_position(xp int, yp int,isRover bool) int {
 	status := 0
-	flen := len(arena.Food)
 
-	for i := 0; i < flen; i++ {
-		f := arena.Food[i]
-		dx := float64(f[0] - xp)
-		dy := float64(f[1] - yp)
+	for i := 0; i < NUM_PREY; i++ {
+		f := prey[i]
+		dx := float64(f.Xpos - xp)
+		dy := float64(f.Ypos - yp)
 		dist := int(math.Hypot((dx), (dy)))
 		if dist <= FOOD_RADIUS {
+			if isRover {
+				prey[i].Dead = true
+			}
 			status = 7
 			break
 		}
