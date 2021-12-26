@@ -4,6 +4,8 @@ Markov Network Brains with GA in Go
 Written by Phillip R. Neal
 December 23, 2021
 
+December 24, 2021 - Got it working. The GO->HTML5 model goes too fast.
+Which is a good thing. But hard to watch stuff happening. 
 
 Markov Simple Markov Network Brain with Go talking to
 an HTML/JS graphic page vi websockets
@@ -35,22 +37,19 @@ Evolution:
 1. Generate a population of "BRAINS".
 2. Evaluate the fitness of each of the original BRAINS
 3. Sort the population descending based on fitness
-4. For the best BRAIN (POPULATION[0] after sort)
-    - Crossover with a randomly chosen BRAIN from the less fit.
-    - Mutate gates depending on mutation rate
-5. Evaluate the fitness of the candidata brain 
+4. With the best BRAINS in population after sort)
+    - Replace and mutate all other brains depending on mutation rate
+
+5. Evaluate the fitness of all the new brains 
 6. If candidate brain is better than the worst BRAIN, 
    replace worst Brain with candidate brain
 7. Go to 4 above.
 
 The Goal:
 
-1. Have a 'rover' go around in a big circle.
-2. If the rover "body" touches a wall or a blue square it is dead.
+1. Have all the rovers head for food 
 3. The rover accumulates fitness depending on how many times in a row
-   it goes straight.
-4. The rover has a "Time_to_live". 
-5. The rover has a 'BRAIN'.
+   it goes straight as well as if it touches food
  
 
 How to Run:
@@ -58,30 +57,18 @@ How to Run:
 2. At the CLI type "./run.sh . This will fire up the GO side
 3. Open a Chrome browser (maybe others will work)
 3. Point it at "localhost:8081"
-4. You should see a red whirling rover in a field of white with blue boxes.
-5. Turn on View->Developer->Javascript Console for more info
+4. You should see a bunch of green static food circles and
+   a bunch of moving colored circles.
 
 Overview:
 
-1. The red 'rover' has 3 sensors.
+1. Rovers have 3 sensors.
 2. The sensors detect whether or not it senses a wall or the side of a cube.
+and the distance to said detection
 3. The data returned from the sensors is sent to the think module
 4. The think module contains the Markov Network Brain (MNB).
 5. The think module returns the best sensor choice to use.
 6. The rover turns in the direction of the best sensor.
-
-Deep Copy Hassles:
-
-1. I had to do deep copy on the "BRAIN" because mutation and crossover should
-not be done on the original too deep object oriented "brain" in the POPULATION array.
-
-2. So I did the JSON trick
-    - BRAIN = JSON.parse(JSON.stringify(POPULATION[0]));
-    - POPULATION[POP_SIZE-1] = JSON.parse(JSON.stringify(BRAIN))
-
-3. HOWEVER !!! For some reason the JSON trick wouldn't do 
-   a true "GATE" object. So I had to rewrite the "NEURONS" item as a
-   2 dimensional array. Sigh.
 
 Gates:
 

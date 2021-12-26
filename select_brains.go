@@ -19,13 +19,13 @@ func select_brains() {
 	sort.Slice(rovers[:], func(i, j int) bool {
 		return rovers[i].Fitness > rovers[j].Fitness
 	})
-	fmt.Println("\n after sort")
+	/*fmt.Println("\n after sort")
 	for ir := 0; ir < NUM_ROVERS; ir++ {
 		fmt.Println(ir, rovers[ir].Fitness)
 	}
+*/
+	fmt.Println("\nBEST ", rovers[0].Fitness," WORST: ", rovers[NUM_ROVERS-1].Fitness)
 
-	fmt.Println("\nBEST SCORE ", rovers[0].Fitness)
-	fmt.Println("WRST SCORE ", rovers[NUM_ROVERS-1].Fitness)
 	//zero out all the scores -- starting another epoch
 	for ir := 0; ir < NUM_ROVERS; ir++ {
 		rovers[ir].Fitness = 0
