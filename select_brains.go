@@ -7,6 +7,7 @@ import (
 )
 
 func select_brains() {
+	fmt.Println("IN SELECT BRAINS")
 	sum := 0
 	fmt.Println("\nFITNESS\n")
 
@@ -19,22 +20,23 @@ func select_brains() {
 	sort.Slice(rovers[:], func(i, j int) bool {
 		return rovers[i].Fitness > rovers[j].Fitness
 	})
-	/*fmt.Println("\n after sort")
+	fmt.Println("\n after sort")
 	for ir := 0; ir < NUM_ROVERS; ir++ {
 		fmt.Println(ir, rovers[ir].Fitness)
 	}
-*/
+
 	fmt.Println("\nBEST ", rovers[0].Fitness," WORST: ", rovers[NUM_ROVERS-1].Fitness)
 
 	//zero out all the scores -- starting another epoch
 	for ir := 0; ir < NUM_ROVERS; ir++ {
 		rovers[ir].Fitness = 0
-		rovers[ir].Dead = false
+		rovers[ir].Dead = 0
 		rovers[ir].Xpos = arena.Width / 2
 		rovers[ir].Ypos = arena.Height / 2
 		rovers[ir].Vel_x = getRandomInt(-1, 2)
 		rovers[ir].Vel_y = getRandomInt(-1, 2)
 		rovers[ir].Angle_index = getRandomInt(0,8)
+		rovers[ir].Time_to_live = NUM_MAX_STEPS
 	}
 
 	//HOPE ! HAHAHaaa
@@ -66,7 +68,6 @@ func getRandomInt(min int, max int) int {
 }
 
 func mutate_brains(elite_cut int) {
-	//I am not mutating sign here. Too drastic
 	//fmt.Println("IN MUTATE BRAINS")
 	var num_mutations int
 	var nn float64

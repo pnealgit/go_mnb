@@ -7,6 +7,21 @@ December 23, 2021
 December 24, 2021 - Got it working. The GO->HTML5 model goes too fast.
 Which is a good thing. But hard to watch stuff happening. 
 
+
+December 26, 2021 - Working with Filled rectangles as prey. 
+
+December 29, 2021 - Start to work on only showing 1 rover eating grid
+of food items
+
+December 30, 2021 - When I go down to one rover on the html5 page
+I start to lose behavior. Antenna don't make it all the way, etc.
+Could be FPS. I will try to send an ack from the browser back to the
+server.
+
+January 1, 2022 - Implemented the ack. Made screen update a function of
+data received, not just an interval.
+
+
 Markov Simple Markov Network Brain with Go talking to
 an HTML/JS graphic page vi websockets
 

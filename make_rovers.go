@@ -11,12 +11,13 @@ func make_rovers() {
 	for i := 0; i < NUM_ROVERS; i++ {
 		rover.Luts = make_Luts()
 		rover.Fitness = 0
-		rover.Dead = false
+		rover.Dead = 0
 		rover.Xpos = arena.Width/2 + getRandomInt(-10, 10)
 		rover.Ypos = arena.Height/2 + getRandomInt(-10, 10)
 		rover.Angle_index = getRandomInt(0,8)
 		rover.Vel_x = 0
 		rover.Vel_y = 0
+		rover.Time_to_live = NUM_MAX_STEPS
 		rovers[i] = rover
 	} //end of for loop on num_rovers
 } //end of make_rovers

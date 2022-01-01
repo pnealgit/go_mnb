@@ -1,9 +1,11 @@
+//flipped from squares to circles
 function Prey(xy) {
 	
     this.x = xy.shift();
     this.y = xy.shift();
-    this.r = 15;
-    this.color = 'green';
+this.dead = xy.shift();
+    this.r = 10;
+    this.color = 'red';
 
 } //end of prey function  
 
@@ -21,22 +23,18 @@ function update_prey(positions) {
     }
 } //end of function
 
-function draw_prey() {
-//	console.log("DRAWING LEN ",PREY.length)
-	color = "green"
+function draw_prey(prey) {
 	r = 10
-        for(var j=0;j<PREY.length;j++ ) {
-		//console.log("DRAW Px,Py",PREY[j].x,PREY[j].y)
-       		ctx = myGameArea.context;
-            //ctx.fillStyle = "green"
-	    ctx.fillStyle = '#F9DC5C';
+       	ctx = myGameArea.context;
+        for(var j=0;j<prey.length;j++ ) {
+		//if (prey[j][2] == 0) {
+	ctx.beginPath();
+	ctx.fillStyle = "red";
 
-            //ctx.beginPath();
-		ctx.fillRect(PREY[j][0],PREY[j][1],20,20)
-            //ctx.arc(PREY[j].x,PREY[j].y,r,0,2*Math.PI);
-            //ctx.fill();
-            //ctx.strokeStyle = '#ff0000';
-            //ctx.stroke();
-            //ctx.closePath();
+		//flipped
+	ctx.arc(prey[j][0],prey[j][1], r, 0, 2 * Math.PI);
+	ctx.fill();
+	ctx.stroke();
+	//}
        }
 }

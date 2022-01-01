@@ -4,8 +4,8 @@ package main
 //the name is Capitalized.... 55 minutes on that problem...
 type Mess struct {
         Msg_type  string
-        Predator_positions [NUM_ROVERS][8]int
-        Prey_positions [NUM_PREY][2]int
+        Predator_position [8]int
+        Prey_positions [][3]int
         //Position [8]int
 }
 
@@ -19,10 +19,7 @@ type Arena struct {
 type Prey struct {
 	Xpos	int
 	Ypos	int
-	Ulx	int
-	Uly	int
-	Type	int
-	Dead	bool
+	Dead	int
 }
 
 type Brain struct {
@@ -44,8 +41,9 @@ type Rover struct {
         Vel_x           int
         Vel_y           int
         Sensor_data [NUM_SENSORS][4]int
-        Dead        bool
+        Dead        int
 	Angle_index int
+	Time_to_live int
 }
 
 
@@ -62,9 +60,8 @@ var SENSOR_LENGTH = 160
 
 //NUM_SENSORS * 4 * 4
 const NUM_NEURONS = 64
-const NUM_ROVERS = 30
-const NUM_PREY = 20
-const STATE_SIZE = 64
+const NUM_ROVERS = 20
+const STATE_SIZE = 128
 var INPS_SIZE = 3
 var SETTLING_TIME = 10
 var MUTATION_RATE = .2    //"Use the fucking float, Luke"
@@ -73,8 +70,8 @@ var MUTATION_RATE = .2    //"Use the fucking float, Luke"
 var ANGLES_DX = [8]int{1, 1,  0, -1, -1, -1, 0, 1}
 var ANGLES_DY = [8]int{0,-1, -1, -1,  0,  1, 1, 1}
 var NUM_ANGLES = 8
-var FOOD_RADIUS = 15
-var NUM_MAX_STEPS = 2200
+var FOOD_RADIUS = 10
+var NUM_MAX_STEPS = 2000
 var NUM_TRIES = 500
 var GLOBAL_FITNESS = 0
 var BOX_WIDTH = 21

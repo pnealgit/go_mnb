@@ -82,7 +82,8 @@ func sweep(ir int, data_in []int) {
 		OUT_STATE[j] = 0
 	}
 
-	var LUTS [STATE_SIZE][8]int
+	//var LUTS [STATE_SIZE][8]int
+	var LUTS [NUM_NEURONS][8]int
 	//I think this is just a copy...maybe..
 	LUTS = rovers[ir].Luts
 	var tt [2][2]int

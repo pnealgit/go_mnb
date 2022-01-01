@@ -14,30 +14,13 @@ func get_sensor_data(ir int) {
 	var Ypos int
 	var sensor_angle_index int
 	var dist int
-	Xpos = rovers[ir].Xpos
-	Ypos = rovers[ir].Ypos
-	var zorro int
-	//food is prey
-	//third arg  is whether it is a rover or rover sensor
-	zorro = check_food_position(Xpos, Ypos,true)
-	if zorro == 7 {
-		rovers[ir].Fitness += 5
-	}
 	for isensor := 0; isensor < NUM_SENSORS; isensor++ {
-
 		sensor_angle_index = get_sensor_angle_index(isensor, rovers[ir].Angle_index)
 		//sensor_angle_index = isensor
 		deltax := ANGLES_DX[sensor_angle_index]
 		deltay := ANGLES_DY[sensor_angle_index]
 		Xpos = rovers[ir].Xpos
 		Ypos = rovers[ir].Ypos
-		if !rovers[ir].Dead {
-			zorro = check_wall_position(Xpos, Ypos)
-			if zorro > 0 {
-				rovers[ir].Dead = true
-				//fmt.Println("GET_SENSOR ROVER IR IS DEAD ",ir)
-			}
-		}
 		wall = 0
 		for step := 0; step < SENSOR_LENGTH; step++ {
 			Xpos += deltax
@@ -54,10 +37,9 @@ func get_sensor_data(ir int) {
 				break
 			}
 
-			wall = check_food_position(Xpos, Ypos,false)
+			//0 means is a sensor not a rover
+			wall = check_food_position(Xpos, Ypos,0)
 			if wall > 0 {
-				rovers[ir].Fitness += 1 //get some for food
-
 				break
 			}
 		} //end of step loop
@@ -67,7 +49,7 @@ func get_sensor_data(ir int) {
 		rovers[ir].Sensor_data[isensor][3] = dist
 	} //end of isensor loop
 
-	rovers[ir] = rovers[ir]
+	//rovers[ir] = rovers[ir]
 }
 
 func make_binary_sensor_data(ir int) string {
@@ -161,17 +143,21 @@ func check_wall_position(xp int, yp int) int {
 
 }
 
-func check_food_position(xp int, yp int,isRover bool) int {
+func check_food_position(xp int, yp int,isRover int) int {
 	status := 0
 
-	for i := 0; i < NUM_PREY; i++ {
-		f := prey[i]
-		dx := float64(f.Xpos - xp)
-		dy := float64(f.Ypos - yp)
+	for i := 0; i < len(prey); i++ {
+		if prey[i].Dead == 1 {
+			continue
+		}
+		dx := float64(prey[i].Xpos - xp)
+		dy := float64(prey[i].Ypos - yp)
 		dist := int(math.Hypot((dx), (dy)))
-		if dist <= BOX_HALF {
-			if isRover {
-				prey[i].Dead = true
+		if dist <= FOOD_RADIUS {
+			if isRover == 1{
+				prey[i].Dead = 1
+				//fmt.Println("PREY ",i," IS DEAD")
+
 			}
 			status = 7
 			break

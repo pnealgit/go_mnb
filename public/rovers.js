@@ -1,32 +1,17 @@
-function make_new_rovers(positions) {
-     for (var pos=0;pos < positions.length;pos++) {
-           ROVERS[pos] = new Rover(positions[pos]);
-     }
-}
-function update_rovers(positions) {
-    for (var pos=0;pos < positions.length;pos++) {
-        ROVERS[pos].sensor_data = positions[pos];
-    }
-} //end of function
-
 
 function Rover(xy) {
-	//console.log("XY IN ROVER: ",xy)
 	//start in the middle
     this.r = 10;
     this.sensor_data = xy;
-    //console.log("SENSOR DATA IN NEW: ",this.sensor_data)
 
+/*
     this.draw = function() {
-	    //console.log("DRAW SENSOR DATA XY: ",this.sensor_data)
 	x = this.sensor_data.shift()
 	y = this.sensor_data.shift()
-	//console.log("center x,y:",x,y);
         ctx = myGameArea.context;
         ctx.beginPath();
         ctx.arc(x,y, this.r, 0, 2 * Math.PI);
-        //ctx.fillStyle = "red";
-        ctx.fillStyle = '#'+(0x1000000+(Math.random())*0xffffff).toString(16).substr(1,6);
+        ctx.fillStyle = "green";
         ctx.fill();
         ctx.beginPath();
         ctx.strokeStyle = '#000000';
@@ -45,13 +30,34 @@ function Rover(xy) {
         }       
 
     } //end of rover draw
+    */
 }
 //end of Rover function
 
-function draw_rovers() {
-    for (var i = 0; i < ROVERS.length; i++) {
-        ROVERS[i].draw();
-    } //end of loop on rovers
-}
-//end of function 
+function draw_rover() {
+        //x = ROVER.sensor_data.shift()
+        //y = ROVER.sensor_data.shift()
+        x = ROVER.shift()
+        y = ROVER.shift()
+        ctx = myGameArea.context;
+        ctx.beginPath();
+        ctx.arc(x,y, 10, 0, 2 * Math.PI);
+        ctx.fillStyle = "green";
+        ctx.fill();
+        ctx.beginPath();
+        ctx.strokeStyle = '#000000';
+        ctx.stroke();
+        ctx.closePath();
+
+	for(i =0 ;i<NUM_SENSORS;i++) {
+                xp = ROVER.shift()
+                yp = ROVER.shift()
+                ctx.beginPath()
+                ctx.strokeStyle = '#000000';
+                ctx.moveTo(x,y);
+                ctx.lineTo(xp,yp);
+                ctx.stroke();
+                ctx.closePath();
+        }
+} //end of function 
 

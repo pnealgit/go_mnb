@@ -1,38 +1,45 @@
 function Rover(xy) {
-	//console.log("XY IN ROVER: ",xy)
+	console.log("XY IN ROVER: ",xy)
+	//start in the middle
     this.r = 10;
     this.sensor_data = xy;
     //console.log("SENSOR DATA IN NEW: ",this.sensor_data)
-}
-//end of Rover function
 
-function draw_rover(ROVER) {
-//	console.log("ROVER TO DRAW",ROVER)
-        x = ROVER.sensor_data[0];
-        y = ROVER.sensor_data[1];
+    this.draw = function() {
+	    //console.log("DRAW SENSOR DATA XY: ",this.sensor_data)
+	x = this.sensor_data.shift()
+	y = this.sensor_data.shift()
+	//console.log("center x,y:",x,y);
         ctx = myGameArea.context;
         ctx.beginPath();
-        ctx.arc(x,y, ROVER.r, 0, 2 * Math.PI);
-        ctx.fillStyle = "red";
+        ctx.arc(x,y, this.r, 0, 2 * Math.PI);
+        //ctx.fillStyle = "red";
+        ctx.fillStyle = '#'+(0x1000000+(Math.random())*0xffffff).toString(16).substr(1,6);
         ctx.fill();
         ctx.beginPath();
         ctx.strokeStyle = '#000000';
         ctx.stroke();
         ctx.closePath();
 
-            knt = 2;
-              for(i =0 ;i<NUM_SENSORS;i++) {
-                xp = ROVER.sensor_data[knt]
-                knt++;
-                yp = ROVER.sensor_data[knt];
-                knt++;
+	      for(i =0 ;i<NUM_SENSORS;i++) {
+		xp = this.sensor_data.shift()
+		yp = this.sensor_data.shift()
                 ctx.beginPath()
                 ctx.strokeStyle = '#000000';
                 ctx.moveTo(x,y);
                 ctx.lineTo(xp,yp);
                 ctx.stroke();
                 ctx.closePath();
+        }       
 
-	}//end of loop on sensors
-} //end of function
+    } //end of rover draw
+}
+//end of Rover function
+
+function draw_rovers() {
+    for (var i = 0; i < ROVERS.length; i++) {
+        ROVERS[i].draw();
+    } //end of loop on rovers
+}
+//end of function 
 

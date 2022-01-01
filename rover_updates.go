@@ -3,21 +3,33 @@ import (
 //	"fmt"
 )
 
-func do_rover_updates() [NUM_ROVERS][8]int {
+func do_rover_update(ir int) [8]int {
 
 	//var err error
 	var binary_sensor_data string
-	//var max_index int
-	var team_positions [NUM_ROVERS][8]int //2 for pos 6 for sensor pos
+	var team_positions [8]int //2 for pos 6 for sensor pos
+	zorro := 0
 
-	for ir := 0; ir < NUM_ROVERS; ir++ {
-		if rovers[ir].Dead 		{
-			continue
-		}
-		get_sensor_data(ir)
-		binary_sensor_data = make_binary_sensor_data(ir)
-		max_index := 0
-		max_index = think(ir, binary_sensor_data)
+	Xpos := rovers[ir].Xpos
+	Ypos := rovers[ir].Ypos
+
+	zorro = check_food_position(Xpos, Ypos,1)
+        if zorro == 7 {
+                rovers[ir].Fitness += 1
+		//fmt.Println("ROVER : ",ir," FIT: ",rovers[ir].Fitness)
+        }
+
+	zorro = 0
+	zorro = check_wall_position(Xpos,Ypos)
+	if zorro > 0 {
+		rovers[ir].Dead = 1
+	}
+
+	if rovers[ir].Dead == 0 {	
+	get_sensor_data(ir)
+	binary_sensor_data = make_binary_sensor_data(ir)
+	max_index := 0
+	max_index = think(ir, binary_sensor_data)
 	        
                //start east go counterclockwise
                 //sensors go from left to right 0-2
@@ -43,7 +55,7 @@ func do_rover_updates() [NUM_ROVERS][8]int {
 
 		//why is this done.. reward for going straight
                 if new_angle_index == rovers[ir].Angle_index {
-                        rovers[ir].Fitness += 1 //go straight
+                        //rovers[ir].Fitness += 1 //go straight
                 }
 		rovers[ir].Angle_index = new_angle_index
 
@@ -51,17 +63,18 @@ func do_rover_updates() [NUM_ROVERS][8]int {
 		rovers[ir].Ypos += ANGLES_DY[new_angle_index]
 
 		//for dumping back to javascript
-		team_positions[ir][0] = rovers[ir].Xpos
-		team_positions[ir][1] = rovers[ir].Ypos
+		team_positions[0] = rovers[ir].Xpos
+		team_positions[1] = rovers[ir].Ypos
 		//fmt.Println("SDs: ",rovers[ir].Sensor_data)
 		knt := 2
 		for ss:=0;ss<NUM_SENSORS;ss++ {
-			team_positions[ir][knt] = rovers[ir].Sensor_data[ss][0]
+			team_positions[knt] = rovers[ir].Sensor_data[ss][0]
 			knt++
-			team_positions[ir][knt] = rovers[ir].Sensor_data[ss][1]
+			team_positions[knt] = rovers[ir].Sensor_data[ss][1]
 			knt++
 		}
-	} //end of loop on rovers
+	} //end of if on dead
+	//} //end of loop on rovers
 	return team_positions
 } //end of do_update
 

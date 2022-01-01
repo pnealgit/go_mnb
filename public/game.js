@@ -13,6 +13,12 @@ function WebsocketStart() {
 	junk['msg_type'] = "make_arena";	
         senddata(junk);
       	myGameArea.start(); 
+	    //get things started
+    	junk = {}
+    	junk["msg_type"] = "ACK";
+    	//console.log("ACK MESSAGE: ",junk);
+    	senddata(junk);
+	
     }
     ws.onclose = function(evt) {
       console.log('WEBSOCKET CLOSE');
@@ -25,22 +31,31 @@ function WebsocketStart() {
       	if (n != -1 ) {
 	 	var response = JSON.parse(e.data)
 		//console.log("RESPONSE: ",response)
-	      	if (ROVERS.length <= 0) {
-			make_new_rovers(response.Predator_positions);
-	      	} else {
-			update_rovers(response.Predator_positions)
-		}
+		ROVER = response.Predator_position;
+		//console.log("ROVER IS: ",ROVER)
 
-	      	if (PREY.length <= 0) {
-			make_new_prey(response.Prey_positions);
-	      	} else {
-			update_prey(response.Prey_positions)
-		}
 
-		//console.log("PREY AFTER LOAD: ",PREY)
+    		myGameArea.clear();
+	    draw_rover();
 
-		
+		if (response.Prey_positions !== null) { 
+			var prey = response.Prey_positions;
+		      r = 10
+        ctx = myGameArea.context;
+        for(var j=0;j<prey.length;j++ ) {
+        ctx.beginPath();
+        ctx.fillStyle = "red";
+        ctx.arc(prey[j][0],prey[j][1], r, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+	}
+		} //end of if
+    	junk = {}
+    	junk["msg_type"] = "ACK";
+    	//console.log("ACK MESSAGE: ",junk);
+    	senddata(junk);
       } //end of if found 'positions'
+
     } //endo of onmessage
 
 
@@ -67,25 +82,21 @@ function updateGameArea() {
     if (pause) {
        return
     }
-       var mydata = {};
-       //mydata['num_episodes'] =  num_episodes;
-       //senddata(mydata);
-
     myGameArea.clear();
-    draw_rovers();
-    draw_prey();
+    //draw_rovers();
+    //draw_prey();
 } //end of updateGameArea
 
 myGameArea = {
     canvas : document.createElement("canvas"),
     start : function() {
-        this.millis = 75;  //game intervale milliseconds
+        //this.millis = 75;  //game intervale milliseconds
         this.canvas.width = width;
         this.canvas.height = height;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         pause = false;
-        this.interval = setInterval(updateGameArea,this.millis);
+        //this.interval = setInterval(updateGameArea,this.millis);
     },  
     stop : function() {
         pause = true; 

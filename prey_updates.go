@@ -1,22 +1,34 @@
 package main
 import (
-	//"fmt"
+//	"fmt"
 )
 
-func do_prey_updates() [NUM_PREY][2]int {
-	var prey_positions [NUM_PREY][2] int
-	for i := 0; i < NUM_PREY; i++ {
-		if prey[i].Dead {
-                    prey[i].Xpos = getRandomInt(BOX_WIDTH, arena.Width-BOX_WIDTH)
-                     prey[i].Ulx  = prey[i].Xpos - BOX_HALF
-                     prey[i].Ypos = getRandomInt(BOX_WIDTH, arena.Height-BOX_WIDTH)
-                     prey[i].Uly  = prey[i].Ypos - BOX_HALF
-                }
+func do_prey_updates() [][3]int {
+	var prey_positions [][3] int
+	var junk  [3]int
+	for i := 0; i < len(prey); i++ {
+		if prey[i].Dead == 0 {
+			junk[0] = prey[i].Xpos
+			junk[1] = prey[i].Ypos
+			junk[2] = prey[i].Dead
+			prey_positions = append(prey_positions,junk)
+		}
 
-		prey[i].Dead = false
-		prey_positions[i][0] = prey[i].Ulx
-		prey_positions[i][1] = prey[i].Uly
 	} //end of loop on prey 
+	//fmt.Println("prey positions: ",prey_positions)
 	return prey_positions
 } //end of do_update
+
+func reset_prey() {
+	for i := 0; i < len(prey); i++ {
+                prey[i].Dead = 0
+	}
+}
+func num_dead_prey() int {
+	knt := 0
+	for i := 0; i < len(prey); i++ {
+                knt += prey[i].Dead 
+	}
+	return knt
+}
 

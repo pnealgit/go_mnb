@@ -9,11 +9,11 @@ import (
 	"net/http"
 	"os"
 	"strings"
-	//	"time"
+	//		"time"
 )
 
 var rovers [NUM_ROVERS]Rover
-var prey [NUM_PREY]Prey
+var prey []Prey
 
 var arena Arena
 var num_steps int
@@ -28,10 +28,15 @@ var upgrader = websocket.Upgrader{
 }
 var fixed_mt int
 
+var draw_message []byte
+var rover_position [8]int
+var prey_positions [][3]int
+var mmm Mess
+var this_rover int
 func talk(w http.ResponseWriter, r *http.Request) {
 	c, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Print("upgrade:", err)
+		fmt.Print("upgrade:", err)
 		return
 	}
 	defer c.Close()
@@ -39,14 +44,13 @@ func talk(w http.ResponseWriter, r *http.Request) {
 	for {
 		mt, message, err := c.ReadMessage()
 		if err != nil {
-			log.Println("read:", err)
+			fmt.Println("read:", err)
 			break
 		} //end of if on message err
 		fixed_mt = mt
 
-		fmt.Println("MESSAGE TYPE: ", mt)
 		junk := string(message)
-		fmt.Println("ARENA DATA: ", junk)
+		//fmt.Println("ARENA DATA: ", junk)
 		if strings.Contains(junk, "make_arena") {
 			fmt.Println("MAKE ARENA!!")
 			jerr := json.Unmarshal(message, &arena)
@@ -56,54 +60,50 @@ func talk(w http.ResponseWriter, r *http.Request) {
 			} //end of if on jerr
 			fmt.Println("ARENA WIDTH: ", arena.Width)
 			fmt.Println("ARENA HEIGHT: ", arena.Height)
-			//fmt.Println("ARENA FOOD: ", arena.Food)
 			make_rovers()
 			make_prey()
-			break
+			this_rover = 0
 		} //end of if on arena
+
+		if strings.Contains(junk, "ACK") {
+			num_dead := 0
+			num_dead = num_dead_prey()
+
+                       rovers[this_rover].Time_to_live--
+                        if rovers[this_rover].Dead == 1 ||
+                                rovers[this_rover].Time_to_live <= 0 ||
+				num_dead == len(prey) {
+                                this_rover++
+                                reset_prey()
+				if this_rover >= NUM_ROVERS {
+					select_brains()
+					make_prey()
+					this_rover = 0
+				}
+                        } 
+			if this_rover < NUM_ROVERS {
+				rover_position = do_rover_update(this_rover)
+	 			prey_positions = do_prey_updates()
+
+				mmm.Msg_type = "positions"
+				mmm.Predator_position = rover_position
+				mmm.Prey_positions = prey_positions
+
+				draw_message, err = json.Marshal(mmm)
+				if err != nil {
+					fmt.Println("bad angles Marshal")
+					os.Exit(7)
+				}
+				err = c.WriteMessage(fixed_mt, draw_message)
+				if err != nil {
+					fmt.Println("BAD DRAW MESSAGE:", err)
+					os.Exit(4)
+				} //end of if on write err
+			} 
+
+                } //end of if on ACK
 	} //end of infinite loop waiting for message
 
-	//ok now we just spew data to web
-	var draw_message []byte
-	var rover_positions [NUM_ROVERS][8]int
-	var prey_positions [NUM_PREY][2]int
-	var mmm Mess
-	for try := 0; try < NUM_TRIES; try++ {
-		fmt.Println("TRY: ", try)
-		for num_steps := 0; num_steps < NUM_MAX_STEPS; num_steps++ {
-			rover_positions = do_rover_updates()
-			prey_positions = do_prey_updates()
-			//fmt.Println("PREY POSITIONS: ",prey_positions)
-			dead_knt := 0
-			for ix := 0; ix < NUM_ROVERS; ix++ {
-				if rovers[ix].Dead {
-					dead_knt += 1
-				}
-			}
-			if dead_knt >= NUM_ROVERS {
-				dead_knt = 0
-				//fmt.Println("DEAD KNT >= NUM_ROVERS")
-				break
-			}
-
-			mmm.Msg_type = "positions"
-			mmm.Predator_positions = rover_positions
-			mmm.Prey_positions = prey_positions
-			draw_message, err = json.Marshal(mmm)
-			if err != nil {
-				fmt.Println("bad angles Marshal")
-				os.Exit(7)
-			}
-
-			err = c.WriteMessage(fixed_mt, draw_message)
-			if err != nil {
-				log.Println("BAD DRAW MESSAGE:", err)
-				os.Exit(4)
-			} //end of if on write err
-			//time.Sleep(5 * time.Millisecond)
-		} //loop on num_steps
-		select_brains()
-	} //end of try loop
 	fmt.Println("END OF TRY LOOP")
 	os.Exit(0)
 } //end of talk
